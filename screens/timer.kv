@@ -1,0 +1,57 @@
+#:kivy 2.3.0
+#:import MDRaisedButton kivymd.uix.button.MDRaisedButton
+
+<TimerWidget>:
+    cols: 1
+    rows: 3
+    padding: 10
+    spacing: 10
+
+    BoxLayout:  # First row
+        size_hint_y: None
+        height: root.height / 3  # Each row takes even space
+        Widget:  # Empty widget for even spacing
+            size_hint_x: None
+            width: 0
+
+    BoxLayout:  # BoxLayout for the second row
+        orientation: 'vertical'
+        size_hint_y: None
+        height: 550
+        # canvas.before:
+        #     Color:
+        #         rgba: 0.8, 0.8, 0.8, 1  # Set the background color (light gray in this example)
+        #     Rectangle:
+        #         pos: self.pos
+        #         size: self.size
+
+        CircleProgressBar:  # CircleProgressBar centered
+            id: progress_bar
+            size_hint: None, None
+            size: 550, 550
+            pos_hint: {'center_x': 0.5}
+
+    BoxLayout:
+        size_hint_y: None
+        height: root.height / 3
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'top'
+
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: None, None
+                size: self.minimum_size  # Adjust the size to fit the buttons
+                spacing: dp(10)  # Adds 10dp spacing between children
+
+                MDRaisedButton:
+                    text: "Start"
+                    on_press: root.on_start_pressed(progress_bar)
+                
+                MDRaisedButton:
+                    text: "Skip"
+                    on_press: root.skip_timer()
+
+
+    
