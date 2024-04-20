@@ -1,5 +1,6 @@
 #:kivy 2.3.0
-#:import MDRaisedButton kivymd.uix.button.MDRaisedButton
+#:import MDFillRoundFlatButton kivymd.uix.button.MDFillRoundFlatButton
+#:import CircleProgressBar components.circle_progress_bar.CircleProgressBar
 
 <TimerWidget>:
     cols: 1
@@ -18,12 +19,6 @@
         orientation: 'vertical'
         size_hint_y: None
         height: 550
-        # canvas.before:
-        #     Color:
-        #         rgba: 0.8, 0.8, 0.8, 1  # Set the background color (light gray in this example)
-        #     Rectangle:
-        #         pos: self.pos
-        #         size: self.size
 
         CircleProgressBar:  # CircleProgressBar centered
             id: progress_bar
@@ -37,21 +32,28 @@
 
         AnchorLayout:
             anchor_x: 'center'
-            anchor_y: 'top'
+            anchor_y: 'center'
 
             BoxLayout:
                 orientation: 'horizontal'
                 size_hint: None, None
                 size: self.minimum_size  # Adjust the size to fit the buttons
-                spacing: dp(10)  # Adds 10dp spacing between children
+                spacing: dp(35)  # Adds 10dp spacing between children
 
-                MDRaisedButton:
-                    text: "Start"
-                    on_press: root.on_start_pressed(progress_bar)
+                MDFillRoundFlatButton:
+                    id: start_button
+                    md_bg_color: root.primary_color
+                    text: 'Start'
+                    font_size: '20sp'
+                    on_press: root.toggle_timer()
                 
-                MDRaisedButton:
+                MDFillRoundFlatButton:
+                    id: skip_button
+                    md_bg_color: root.primary_color
                     text: "Skip"
+                    disabled: root.skip_disabled
+                    icon: 'magnify'
+                    font_size: '20sp'
                     on_press: root.skip_timer()
-
 
     
