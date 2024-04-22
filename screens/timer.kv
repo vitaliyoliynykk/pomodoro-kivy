@@ -1,6 +1,7 @@
 #:kivy 2.3.0
 #:import MDFillRoundFlatButton kivymd.uix.button.MDFillRoundFlatButton
 #:import CircleProgressBar components.circle_progress_bar.CircleProgressBar
+#:import Statistics components.statistics.Statistics
 
 <TimerWidget>:
     cols: 1
@@ -11,9 +12,12 @@
     BoxLayout:  # First row
         size_hint_y: None
         height: root.height / 3  # Each row takes even space
-        Widget:  # Empty widget for even spacing
-            size_hint_x: None
-            width: 0
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'center'
+
+            Statistics:
+                id: statistics
 
     BoxLayout:  # BoxLayout for the second row
         orientation: 'vertical'

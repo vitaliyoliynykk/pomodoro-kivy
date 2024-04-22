@@ -7,7 +7,6 @@ Builder.load_file('components/circle_progress_bar.kv')
 
 class CircleProgressBar(MDAnchorLayout):
     bar_color = ListProperty([163/255, 67/255, 67/255])
-
     bar_width = NumericProperty(10)
 
     # circle progress in %

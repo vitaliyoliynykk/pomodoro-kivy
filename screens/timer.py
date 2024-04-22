@@ -3,8 +3,8 @@ from kivy.clock import Clock
 from kivy.lang import Builder
 from kivy.properties import ListProperty
 from kivy.properties import BooleanProperty
-
-
+from kivy.storage.jsonstore import JsonStore
+from datetime import datetime
 
 Builder.load_file('screens/timer.kv')
 
@@ -28,9 +28,12 @@ class TimerWidget(GridLayout):
         self.current_time = self.max_time
         self._timer_event = None
         self.skip_disabled = True
+        self.statistic_store = JsonStore('statistic_store.json')
 
 
     def toggle_timer(self):
+        self.update_statistics()
+
         if self._timer_event:
             self._timer_event.cancel()
             self._timer_event = None
@@ -56,11 +59,13 @@ class TimerWidget(GridLayout):
             self._timer_event.cancel()
             self._timer_event = None
 
+        self.update_storage()
         self.calculate_iterations()
+        self.update_statistics()
         self.set_max_time()
         self.current_time = self.max_time
         self.update_progress_bar()
-
+        
         self.ids.start_button.text = 'Start'
 
     def update_progress_bar(self):
@@ -68,6 +73,12 @@ class TimerWidget(GridLayout):
         self.timer_label = f"{minutes:02d}:{seconds:02d}"
         self.ids.progress_bar.set_status_text(self.timer_label)
         self.ids.progress_bar.set_progress(100 - self.current_time/(self.max_time /100))
+    
+    def update_statistics(self):
+        if (self.sequence[self.iteration].get('type') == 'focus'):
+            self.ids.statistics.set_title('Time to focus')
+        else:
+            self.ids.statistics.set_title('Time to rest')
     
     def set_max_time(self):
         self.max_time = self.sequence[self.iteration].get('time') * 60  # Max time in seconds
@@ -77,3 +88,13 @@ class TimerWidget(GridLayout):
 
         if self.iteration > self.max_iteration:
             self.iteration = 0
+    
+    def update_storage(self):
+        if (self.sequence[self.iteration].get('type') == 'focus'):
+            current_date = datetime.now()
+            formatted_date = current_date.strftime('%Y-%m-%d')
+
+            completed = self.statistic_store.get(formatted_date).get('completed') or 0
+            completed +=1
+
+            self.statistic_store.put(formatted_date, completed=completed)
