@@ -17,6 +17,7 @@ class TimerWidget(GridLayout):
                 {'time': 15, 'type': 'rest'}]
     
     primary_color = ListProperty([163/255, 67/255, 67/255])
+    blue_color = ListProperty([192/255, 214/255, 232/255])
     skip_disabled = BooleanProperty(True)
 
     def __init__(self, max_time=15, **kwargs):
@@ -66,6 +67,7 @@ class TimerWidget(GridLayout):
         self.current_time = self.max_time
         self.update_progress_bar()
         
+        
         self.ids.start_button.text = 'Start'
 
     def update_progress_bar(self):
@@ -79,6 +81,7 @@ class TimerWidget(GridLayout):
             self.ids.statistics.set_title('Time to focus')
         else:
             self.ids.statistics.set_title('Time to rest')
+            self.ids.statistics.update_statistics()
     
     def set_max_time(self):
         self.max_time = self.sequence[self.iteration].get('time') * 60  # Max time in seconds

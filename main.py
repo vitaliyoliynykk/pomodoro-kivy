@@ -1,8 +1,5 @@
-from kivy.app import App
 from kivymd.app import MDApp
 from screens.timer import TimerWidget
-from components.circle_progress_bar import CircleProgressBar
-from kivy.uix.floatlayout import FloatLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
@@ -24,8 +21,7 @@ class MainApp(MDApp):
         current_formatted_date = current_date.strftime('%Y-%m-%d')
 
         if (not statistic_store.exists(current_formatted_date)):
-            statistic_store.put(current_formatted_date, completed=0)
-            print('Store initialized successfully')
+            statistic_store.put(current_formatted_date, completed=0, goal=5)
 
 
 if __name__ == '__main__':

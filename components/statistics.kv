@@ -1,14 +1,38 @@
 #:kivy 2.3.0
 
+<Content>
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        hint_text: "City"
+
+    MDTextField:
+        hint_text: "Street"
+
 <Statistics>:
     BoxLayout:
         orientation: 'vertical'
         size_hint_x: 1
         size_hint_y: None
+        spacing: 100
 
         MDLabel:
             halign: 'center'
             text: root.title
-            font_size: '34sp'
+            font_size: '44sp'
             theme_text_color: "Custom"
             text_color: root.primary_color
+
+        MDLabel:
+            halign: 'center'
+            text: root.completed_label
+            font_size: '28sp'
+            theme_text_color: "Custom"
+            text_color: root.secondary_color
+
+        MDFlatButton:
+            on_release: root.show_alert_dialog()
+            text: "Set goal"
