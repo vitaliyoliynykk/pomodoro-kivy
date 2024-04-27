@@ -12,6 +12,7 @@ statistic_store = JsonStore('statistic_store.json')
 
 class MainApp(MDApp):
     def build(self):
+        print('HERE')
         # Iphone 14 Pro dimensions
         Window.size = (430,932)
         self.init_storage()
@@ -19,11 +20,12 @@ class MainApp(MDApp):
         return MDFloatLayout()
     
     def init_storage(self):
-        if (statistic_store.keys() == []):
-            current_date = datetime.now()
-            formatted_date = current_date.strftime('%Y-%m-%d')
+        current_date = datetime.now()
+        current_formatted_date = current_date.strftime('%Y-%m-%d')
 
-            statistic_store.put(formatted_date, completed=0)
+        if (not statistic_store.exists(current_formatted_date)):
+            statistic_store.put(current_formatted_date, completed=0)
+            print('Store initialized successfully')
 
 
 if __name__ == '__main__':
