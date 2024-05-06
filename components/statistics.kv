@@ -9,11 +9,15 @@
     MDTextField:
         id: goal_input
         hint_text: "Your goal"
+        helper_text_mode: "on_error"
+        helper_text: "This field is required"
 
     MDTextField:
         id: number_input
         hint_text: "Number of pomodoros"
         input_filter: 'int'
+        helper_text_mode: "on_error"
+        helper_text: "This field is required"
 
 <Statistics>:
     BoxLayout:

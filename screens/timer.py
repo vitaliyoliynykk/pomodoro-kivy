@@ -20,7 +20,7 @@ class TimerWidget(GridLayout):
     blue_color = ListProperty([192/255, 214/255, 232/255])
     skip_disabled = BooleanProperty(True)
 
-    def __init__(self, max_time=15, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.iteration = 0
         self.max_iteration = 5
@@ -32,7 +32,7 @@ class TimerWidget(GridLayout):
 
 
     def toggle_timer(self):
-        self.update_statistics()
+        self.update_statistics_component()
 
         if self._timer_event:
             self._timer_event.cancel()
@@ -61,7 +61,7 @@ class TimerWidget(GridLayout):
 
         self.update_storage()
         self.calculate_iterations()
-        self.update_statistics()
+        self.update_statistics_component()
         self.set_max_time()
         self.current_time = self.max_time
         self.update_progress_bar()
@@ -75,7 +75,7 @@ class TimerWidget(GridLayout):
         self.ids.progress_bar.set_status_text(self.timer_label)
         self.ids.progress_bar.set_progress(100 - self.current_time/(self.max_time /100))
     
-    def update_statistics(self):
+    def update_statistics_component(self):
         if (self.sequence[self.iteration].get('type') == 'focus'):
             self.ids.statistics.set_title('Time to focus')
         else:

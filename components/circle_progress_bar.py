@@ -10,7 +10,7 @@ class CircleProgressBar(MDAnchorLayout):
     bar_width = NumericProperty(10)
 
     # circle progress in %
-    progress = NumericProperty(10)
+    progress = NumericProperty(1)
     status_text = StringProperty('00:00')
 
     def set_progress(self, value):

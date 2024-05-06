@@ -5,16 +5,11 @@ from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
 from datetime import datetime
 
-# from kivymd.uix.boxlayout import MDBoxLayout
-
 statistic_store = JsonStore('statistic_store.json')
-
-# class ContentNavigationDrawer():
-#     pass
 
 class MainApp(MDApp):
     def build(self):
-        # Iphone 14 Pro dimensions
+        # Defaulut dimension: Iphone 14 Pro
         Window.size = (430,932)
         self.init_storage()
 

@@ -20,9 +20,10 @@ class Statistics(MDAnchorLayout):
     secondary_color = ListProperty([192/255, 214/255, 232/255])
     title = StringProperty('Pomodoro')
     goal_visible = BooleanProperty(False)
+    completed_label = StringProperty('#0 of 0')
+
     goal = 5
     completed = 0
-    completed_label = StringProperty('{}/{} completed today'.format(completed, goal))
     dialog = None
 
 
@@ -37,7 +38,6 @@ class Statistics(MDAnchorLayout):
         self.completed = self.get_from_state('completed')
         self.goal = self.get_from_state('goal')
         self.goal_text = self.get_from_state('goal_text')
-        print('From state', self.goal, self.goal_text)
         self.goal_visible = self.goal != 'null' and self.goal_text != 'null'
         self.completed_label = '{}: #{} of {}'.format(self.goal_text, self.completed, self.goal)
 
@@ -76,17 +76,26 @@ class Statistics(MDAnchorLayout):
     def on_set_goal(self, *args):
         dialog_content = self.dialog.content_cls
 
-        number_of_pomodoros = dialog_content.ids.number_input.text
-        goal_text = dialog_content.ids.goal_input.text
+        number_of_pomodoros = dialog_content.ids.number_input
+        goal_text = dialog_content.ids.goal_input
 
+        self.validate_field(number_of_pomodoros)
+        self.validate_field(goal_text)
 
-        store = JsonStore('statistic_store.json')
-        current_state = store.get(self.get_current_date())
-        store.put(self.get_current_date(), goal=int(number_of_pomodoros), goal_text=goal_text, completed=current_state.get('completed'))
+        if number_of_pomodoros.text.strip() and goal_text.text.strip():
+            store = JsonStore('statistic_store.json')
+            current_state = store.get(self.get_current_date())
+            store.put(self.get_current_date(), goal=int(number_of_pomodoros), goal_text=goal_text, completed=current_state.get('completed'))
         
-        self.dialog.dismiss()
-        self.update_statistics()
+            self.dialog.dismiss()
+            self.update_statistics()
     
     def get_current_date(self):
             current_date = datetime.now()
             return  current_date.strftime('%Y-%m-%d')
+    
+    def validate_field(self, field):
+        if not field.text.strip():
+            field.error = True
+        else:
+            field.error = False
