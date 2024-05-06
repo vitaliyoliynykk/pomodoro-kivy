@@ -1,4 +1,3 @@
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.properties import ListProperty, NumericProperty, StringProperty
 from kivy.lang import Builder
 from kivymd.uix.anchorlayout import MDAnchorLayout
