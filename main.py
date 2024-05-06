@@ -5,11 +5,15 @@ from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
 from datetime import datetime
 
+# from kivymd.uix.boxlayout import MDBoxLayout
+
 statistic_store = JsonStore('statistic_store.json')
+
+# class ContentNavigationDrawer():
+#     pass
 
 class MainApp(MDApp):
     def build(self):
-        print('HERE')
         # Iphone 14 Pro dimensions
         Window.size = (430,932)
         self.init_storage()
@@ -21,7 +25,7 @@ class MainApp(MDApp):
         current_formatted_date = current_date.strftime('%Y-%m-%d')
 
         if (not statistic_store.exists(current_formatted_date)):
-            statistic_store.put(current_formatted_date, completed=0, goal=5)
+            statistic_store.put(current_formatted_date, completed=0, goal='null', goal_text='null')
 
 
 if __name__ == '__main__':

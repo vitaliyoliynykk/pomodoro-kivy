@@ -29,7 +29,6 @@ class TimerWidget(GridLayout):
         self.current_time = self.max_time
         self._timer_event = None
         self.skip_disabled = True
-        self.statistic_store = JsonStore('statistic_store.json')
 
 
     def toggle_timer(self):
@@ -94,10 +93,14 @@ class TimerWidget(GridLayout):
     
     def update_storage(self):
         if (self.sequence[self.iteration].get('type') == 'focus'):
+            store = JsonStore('statistic_store.json')
+
             current_date = datetime.now()
             formatted_date = current_date.strftime('%Y-%m-%d')
+    
+            current_state = store.get(formatted_date)
 
-            completed = self.statistic_store.get(formatted_date).get('completed') or 0
+            completed = current_state.get('completed') or 0
             completed +=1
 
-            self.statistic_store.put(formatted_date, completed=completed)
+            store.put(formatted_date, completed=completed, goal=current_state.get('goal'), goal_text=current_state.get('goal_text'))

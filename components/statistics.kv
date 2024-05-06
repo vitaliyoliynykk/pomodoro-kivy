@@ -1,16 +1,19 @@
 #:kivy 2.3.0
 
-<Content>
+<DialogContent>
     orientation: "vertical"
     spacing: "12dp"
     size_hint_y: None
     height: "120dp"
 
     MDTextField:
-        hint_text: "City"
+        id: goal_input
+        hint_text: "Your goal"
 
     MDTextField:
-        hint_text: "Street"
+        id: number_input
+        hint_text: "Number of pomodoros"
+        input_filter: 'int'
 
 <Statistics>:
     BoxLayout:
@@ -25,14 +28,21 @@
             font_size: '44sp'
             theme_text_color: "Custom"
             text_color: root.primary_color
-
         MDLabel:
             halign: 'center'
             text: root.completed_label
-            font_size: '28sp'
+            font_size: '20sp'
             theme_text_color: "Custom"
             text_color: root.secondary_color
+            opacity: 1 if root.goal_visible else 0
 
-        MDFlatButton:
+        MDFillRoundFlatButton:
+            pos_hint: {'center_x': 0.5}
+            md_bg_color: root.secondary_color
+            font_size: '16sp'
             on_release: root.show_alert_dialog()
-            text: "Set goal"
+            text: "Set a goal"
+
+
+
+
