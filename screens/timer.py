@@ -22,6 +22,7 @@ class TimerWidget(GridLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.update_sequence_from_store()
         self.iteration = 0
         self.max_iteration = 5
 
@@ -33,6 +34,7 @@ class TimerWidget(GridLayout):
 
     def toggle_timer(self):
         self.update_statistics_component()
+        self.update_sequence_from_store()
 
         if self._timer_event:
             self._timer_event.cancel()
@@ -104,3 +106,16 @@ class TimerWidget(GridLayout):
             completed +=1
 
             store.put(formatted_date, completed=completed, goal=current_state.get('goal'), goal_text=current_state.get('goal_text'))
+    
+    def update_sequence_from_store(self):
+        store = JsonStore('settings_store.json')
+        focus_time = store.get('cycles').get('focus')
+        rest_time = store.get('cycles').get('rest')
+        rest_long_time = store.get('cycles').get('rest_long')
+
+        self.sequence = [{'time': focus_time, 'type': 'focus'}, 
+                    {'time': rest_time, 'type': 'rest'},
+                    {'time': focus_time, 'type': 'focus'},
+                    {'time': rest_time, 'type': 'rest'},
+                    {'time': focus_time, 'type': 'focus'},
+                    {'time': rest_long_time, 'type': 'rest'}]

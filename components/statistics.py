@@ -1,5 +1,4 @@
-from kivy.uix.anchorlayout import AnchorLayout
-from kivy.properties import ListProperty, NumericProperty, StringProperty, BooleanProperty
+from kivy.properties import ListProperty, StringProperty, BooleanProperty
 from kivy.lang import Builder
 from kivymd.uix.anchorlayout import MDAnchorLayout
 from kivy.storage.jsonstore import JsonStore
@@ -8,11 +7,29 @@ from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dialog import MDDialog
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.textfield import MDTextField
+from kivymd.uix.menu import MDDropdownMenu
+from kivy.clock import Clock
 
 Builder.load_file('components/statistics.kv')
 
-class DialogContent(BoxLayout):
+class GoalDialogContent(BoxLayout):
     pass
+
+class SettingsDialogContent(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Clock.schedule_once(self.populate_form, 0.1)
+
+    def populate_form(self, dt):
+        store = JsonStore('settings_store.json')
+
+        focus_time = store.get('cycles').get('focus')
+        rest_time = store.get('cycles').get('rest')
+        rest_long_time = store.get('cycles').get('rest_long')
+
+        self.ids.focus_input.text = str(focus_time)
+        self.ids.rest_input.text = str(rest_time)
+        self.ids.long_rest_input.text = str(rest_long_time)
 
 
 class Statistics(MDAnchorLayout):
@@ -24,12 +41,40 @@ class Statistics(MDAnchorLayout):
 
     goal = 5
     completed = 0
-    dialog = None
+    goal_dialog = None
+    settings_dialog = None
 
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.update_statistics()
+        Clock.schedule_once(self.init_menu, 0.5)
+
+
+    def init_menu(self, dt):
+        menu_items = [
+            {
+                "text": "Set a goal",
+                "viewclass": "OneLineListItem",
+                "on_release": lambda: self.show_goal_dialog()
+            },
+            {
+                "text": "Settings",
+                "viewclass": "OneLineListItem",
+                "on_release": lambda: self.show_settings_dialog()
+            },
+            {
+                "text": "Reset goal and statistics",
+                "viewclass": "OneLineListItem",
+                "on_release": lambda: self.reset_statistics()
+            },
+        ]
+
+        self.menu = MDDropdownMenu(
+            caller=self.ids.button,
+            items=menu_items,
+            width_mult=4,
+        )
 
     def set_title(self, title):
         self.title = title
@@ -46,18 +91,20 @@ class Statistics(MDAnchorLayout):
 
             return store.get(self.get_current_date()).get(key) or 0
 
-    def show_alert_dialog(self):
-        if not self.dialog:
-            self.dialog = MDDialog(
+    def show_goal_dialog(self):
+        self.menu.dismiss()
+
+        if not self.goal_dialog:
+            self.goal_dialog = MDDialog(
                 title="Set yoour goal for today",
-                content_cls=DialogContent(),
+                content_cls=GoalDialogContent(),
                 type="custom",
                 buttons=[
                     MDFlatButton(
                         text="CANCEL",
                         theme_text_color="Custom",
                         text_color=self.theme_cls.primary_color,
-                        on_release=self.close_dialog
+                        on_release=self.close_goal_dialog
                     ),
                     MDFlatButton(
                         text="SET",
@@ -68,13 +115,61 @@ class Statistics(MDAnchorLayout):
                 ],
             )
 
-        self.dialog.open()
+        self.goal_dialog.open()
 
-    def close_dialog(self, *args):
-        self.dialog.dismiss()
+    def show_settings_dialog(self):
+        self.menu.dismiss()
+
+        if not self.settings_dialog:
+            self.settings_dialog = MDDialog(
+                title="Settings",
+                content_cls=SettingsDialogContent(),
+                type="custom",
+                buttons=[
+                    MDFlatButton(
+                        text="CANCEL",
+                        theme_text_color="Custom",
+                        text_color=self.theme_cls.primary_color,
+                        on_release=self.close_settings_dialog
+                    ),
+                    MDFlatButton(
+                        text="SET",
+                        theme_text_color="Custom",
+                        text_color=self.theme_cls.primary_color,
+                        on_release=self.on_set_settings
+                    ),
+                ],
+            )
+
+        self.settings_dialog.open()
+
+    def close_goal_dialog(self, *args):
+        self.goal_dialog.dismiss()
+
+    def close_settings_dialog(self, *args):
+        self.settings_dialog.dismiss()
+
+    
+    def on_set_settings(self, e):
+        dialog_content = self.settings_dialog.content_cls
+
+        focus_time = dialog_content.ids.focus_input
+        rest_time = dialog_content.ids.rest_input
+        long_rest_time = dialog_content.ids.long_rest_input
+
+        self.validate_field(focus_time)
+        self.validate_field(rest_time)
+        self.validate_field(long_rest_time)
+
+        if focus_time.text.strip() and rest_time.text.strip() and long_rest_time.text.strip():
+            store = JsonStore('settings_store.json')
+            store.put('cycles', focus=int(focus_time.text), rest=int(rest_time.text), rest_long=int(long_rest_time.text))
+
+            self.settings_dialog.dismiss()
+        
 
     def on_set_goal(self, *args):
-        dialog_content = self.dialog.content_cls
+        dialog_content = self.goal_dialog.content_cls
 
         number_of_pomodoros = dialog_content.ids.number_input
         goal_text = dialog_content.ids.goal_input
@@ -85,9 +180,9 @@ class Statistics(MDAnchorLayout):
         if number_of_pomodoros.text.strip() and goal_text.text.strip():
             store = JsonStore('statistic_store.json')
             current_state = store.get(self.get_current_date())
-            store.put(self.get_current_date(), goal=int(number_of_pomodoros), goal_text=goal_text, completed=current_state.get('completed'))
+            store.put(self.get_current_date(), goal=int(number_of_pomodoros.text), goal_text=goal_text.text, completed=current_state.get('completed'))
         
-            self.dialog.dismiss()
+            self.goal_dialog.dismiss()
             self.update_statistics()
     
     def get_current_date(self):
@@ -99,3 +194,9 @@ class Statistics(MDAnchorLayout):
             field.error = True
         else:
             field.error = False
+
+    def reset_statistics(self):
+        store = JsonStore('statistic_store.json')
+        store.put(self.get_current_date(), goal='null', goal_text='null', completed=0)
+        self.update_statistics()
+        self.menu.dismiss()

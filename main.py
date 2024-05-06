@@ -6,6 +6,7 @@ from kivy.storage.jsonstore import JsonStore
 from datetime import datetime
 
 statistic_store = JsonStore('statistic_store.json')
+settings_store = JsonStore('settings_store.json')
 
 class MainApp(MDApp):
     def build(self):
@@ -19,7 +20,10 @@ class MainApp(MDApp):
         current_date = datetime.now()
         current_formatted_date = current_date.strftime('%Y-%m-%d')
 
-        if (not statistic_store.exists(current_formatted_date)):
+        if not settings_store.exists("cycles"):
+            settings_store.put('cycles',focus=25, rest=5, rest_long=15)
+
+        if not statistic_store.exists(current_formatted_date):
             statistic_store.put(current_formatted_date, completed=0, goal='null', goal_text='null')
 
 

@@ -1,6 +1,6 @@
 #:kivy 2.3.0
 
-<DialogContent>
+<GoalDialogContent>
     orientation: "vertical"
     spacing: "12dp"
     size_hint_y: None
@@ -19,12 +19,47 @@
         helper_text_mode: "on_error"
         helper_text: "This field is required"
 
+<SettingsDialogContent>
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "200dp"
+
+    MDTextField:
+        id: focus_input
+        input_filter: 'int'
+        hint_text: "Focus time"
+        helper_text_mode: "on_error"
+        helper_text: "This field is required"
+
+    MDTextField:
+        id: rest_input
+        input_filter: 'int'
+        hint_text: "Rest time"
+        helper_text_mode: "on_error"
+        helper_text: "This field is required"
+
+    MDTextField:
+        id: long_rest_input
+        input_filter: 'int'
+        hint_text: "Long rest time"
+        helper_text_mode: "on_error"
+        helper_text: "This field is required"
+
+
 <Statistics>:
     BoxLayout:
         orientation: 'vertical'
         size_hint_x: 1
         size_hint_y: None
         spacing: 100
+
+        MDFillRoundFlatButton:
+            id: button
+            md_bg_color: root.secondary_color
+            text: "Menu"
+            pos_hint: {"center_x": 0.1}
+            on_release: root.menu.open()
 
         MDLabel:
             halign: 'center'
@@ -39,13 +74,6 @@
             theme_text_color: "Custom"
             text_color: root.secondary_color
             opacity: 1 if root.goal_visible else 0
-
-        MDFillRoundFlatButton:
-            pos_hint: {'center_x': 0.5}
-            md_bg_color: root.secondary_color
-            font_size: '16sp'
-            on_release: root.show_alert_dialog()
-            text: "Set a goal"
 
 
 

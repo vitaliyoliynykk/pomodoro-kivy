@@ -1,5 +1,6 @@
 pomodoro_venv/
 statistic_store.json
+settings_store.json
 bin/
 dist/
 .cache/
